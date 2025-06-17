@@ -1,0 +1,1121 @@
+---
+title: ''
+output:
+  html_document:
+  theme:
+    font_scale: 1
+    base_font: "'Nunito', sans-serif"
+  pagedown::html_paged:
+    self_contained: false
+params:
+  pharmacie: "Pharmacie par défaut"
+  mois_annee: "Mois/Année par défaut"
+  switch_total: "total switch"
+  princeps_total: "total princeps"
+  marge: "marge" 
+  top_10: NULL
+  top_5: NULL
+  lancement: NULL 
+  bio: NULL
+  gap_total: NULL
+  gap_30: NULL
+  gap_50: NULL
+  gap_100: NULL
+  bio2: NULL
+  gap_total2: NULL
+  gap_30_2: NULL
+  gap_50_2: NULL
+  gap_100_2: NULL
+---
+
+```{sass sass_setup, echo = FALSE}
+
+@page
+  size: A4
+  margin: 0
+  
+
+.html, body
+  background-color: #F2F5F7
+  margin: 0  
+  padding: 0
+  //height: 29.7cm
+  //max-height: 29.7cm
+  //overflow: hidden
+  
+.table-responsive 
+  font-size: calc(8px + 0.3vw)
+
+.rapport-header 
+  display: flex
+  flex-direction: column
+  background-color: #254680
+  padding: 20px 0
+  margin: 0
+  font-family: 'Nunito', sans-serif
+  position: relative
+  height: 80px
+  margin-bottom: 10px
+  bottom: 0
+  left: -20px
+  width: calc(100% + 40px)
+  padding-left: 20px
+
+.rapport-title 
+  text-align: center
+  margin: -13px 0 0 0
+  font-size: 30px
+  color: #ffffff
+
+.pharma-info 
+  position: absolute
+  bottom: 5px
+  left: 10px
+  display: flex
+  align-items: center
+  font-size: 14px
+  margin-top: 0px
+
+
+.pharma-logo img 
+  width: 30px
+  height: auto
+  margin-right: 10px
+  margin-top: 90px
+
+
+.pharma-info span 
+  color: #ffffff
+  font-family: 'Nunito', sans-serif
+  margin-right: 5px
+  font-size: 12px
+  margin-left: 10px
+
+
+.date-info 
+  position: absolute
+  bottom: 5px
+  right: 10px
+  display: flex
+  align-items: center
+  font-size: 14px
+  margin-top: 80px
+
+.date-logo img 
+  width: 30px
+  height: auto
+  margin-right: 5px
+  margin-top: 80px
+  
+.date-info span 
+  color: #ffffff
+  font-family: 'Nunito', sans-serif
+  margin-right: 3px
+  font-size: 12px
+  margin-left: 10px
+
+.section-titles 
+  display: flex
+  justify-content: flex-start
+  align-items: baseline
+  background-color: #F2F5F7
+  padding: 2px 0px
+  font-family: 'Nunito', sans-serif
+  flex-direction: column
+  margin-top: -12px
+
+.section-titles h2 
+  font-size: 20px
+  font-weight: bold
+  color: #254680
+  font-family: 'Nunito', sans-serif
+  margin: 0 0 10px 0
+  position: relative
+  margin-top: 0px
+
+
+.section-titles h2::after 
+  content: ''
+  display: block
+  width: 100px
+  height: 4px
+  background-color: #f1b530
+  margin: 5px 0 0 0
+
+.change
+  font-size: 16px
+  font-weight: normal
+  font-style: italic
+  color: #254680
+  margin: 0
+  padding: 0
+
+.table-container 
+  display: flex
+  justify-content: space-around
+  align-items: stretch
+  background-color: #F2F5F7
+  flex-direction: column
+  margin-top: -5px
+
+
+.table 
+  border-collapse: collapse
+  font-family: 'Nunito', sans-serif
+  font-size: 10px
+  margin-top: 0px
+
+.table-top-10 
+  width: 100%
+  height: 2px
+  padding: 4px
+  color: #ffffff
+  border-bottom: none
+  font-size: 10px
+  padding: 2px 8px
+  margin-bottom: 20px
+  
+.table-top-10 td:nth-child(2),
+.table-top-10 td:nth-child(3) 
+  text-align: right
+  
+.sandoz
+  color: #f1b530!important
+  
+.table-top-10 tr:nth-child(even) td 
+  background-color: #e0e0eb
+
+
+.table-top-10 tr:nth-child(odd) td 
+  background-color: #f3f5f7
+
+
+.table-top-10 th
+  padding: 4px
+  text-align: left
+  font-size: 13px
+  vertical-align: middle
+  font-weight: 500
+  height: 2px
+  font-family: 'Nunito', sans-serif
+  
+.table-top-5-container 
+  display: flex
+  flex-direction: column
+  justify-content: flex-start  
+  width: 100%
+  height: auto
+  margin-bottom: 20px
+  padding-bottom: 0
+  margin-top: -5px
+                
+.table-top-5 
+  height: auto
+  margin: 0
+  padding: 4px
+  margin-top: 0px
+  background-color: #254680
+  color: #ffffff
+  padding: 2px 8px
+  width: 100%
+  
+.table-top-5 td:nth-child(3),
+.table-top-5 td:nth-child(4) 
+  text-align: right
+  padding-right: 15px !important
+  
+.table-top-5 tr:nth-child(even) td 
+  background-color: #e0e0eb
+
+
+.table-top-5 tr:nth-child(odd) td 
+  background-color: #f3f5f7
+  
+.table-top-5 th
+  padding: 4px
+  text-align: left
+  font-size: 13px
+  vertical-align: middle
+  font-weight: 500
+  height: 2px
+  font-family: 'Nunito', sans-serif
+
+ 
+.table th 
+  background-color: #254680
+  color: #ffffff
+  padding: 1px 2px
+  text-align: left
+  font-size: 13px
+  line-height: 1
+  vertical-align: middle
+  font-weight: 500
+  font-family: 'Nunito', sans-serif
+  
+.table td 
+  background-color: #f3f5f7
+  border-bottom: 1px solid #ddd 
+  height: 12px
+  padding: 2px 8px
+  line-height: 18px
+  height: 20px
+  font-size: 12px
+  vertical-align: middle
+  border-radius: 2px
+  
+  
+.table thead tr th 
+  padding: 4px !important 
+  line-height: 1.2 !important
+  font-size: 13px !important
+  height: auto !important
+
+
+.table tr 
+  border-bottom: 1px solid #ddd
+
+.table-top-10 tr 
+  border-bottom: 1px solid #ddd
+
+.table-top-5 tr 
+  border-bottom: 1px solid #ddd
+  
+.table-top-10 td 
+  height: 24px !important
+  line-height: 24px !important
+  padding: 2px 8px !important
+  vertical-align: middle !important 
+
+.table-top-5 td 
+  height: 24px !important
+  line-height: 24px !important
+  padding: 2px 8px !important
+  vertical-align: middle !important
+
+.discussion-wrapper 
+  display: flex
+  align-items: flex-start
+  
+.bulle-discussion 
+  display: flex
+  justify-content: space-between 
+  align-items: center
+  background-color: #F0E2B8     
+  padding: 4px 12px
+  width: 150%
+  height: 140px
+  font-family: 'Nunito', sans-serif
+  margin-top: -10px
+  
+.marge
+  color:#008000
+  font-weight: bold
+  font-size: 15px
+
+.estimation
+  color:#254680
+  font-weight: bold
+  font-size: 15px
+  
+.bulle-img 
+  display: flex
+  align-items: center
+  justify-content: center
+  width: auto       
+  height: auto
+  padding: 0
+  margin: 0
+  border: none
+  border-radius: 0
+  box-shadow: none
+  background: transparent
+
+.bulle-img img 
+  width: 130px
+  height: auto
+  margin-top: 33px 
+
+.bulle-discussion p 
+  font-size: 14px
+  margin: 0
+  line-height: 1.5
+  width: 140% 
+
+.bulle-discussion ul 
+  margin: 10px 0 0 0
+  padding: 0
+  list-style: none
+
+.bulle-discussion li 
+  font-size: 13px
+  margin: 3px 0l
+
+.section-lancements 
+  padding-top: 5px
+  background-color: #F2F5F7
+  margin-top: -3px
+
+.section-lancements h2 
+  font-size: 20px
+  font-weight: bold
+  color: #254680
+  margin: 0 0 10px 0
+  position: relative
+
+.section-lancements h2::after 
+  content: ''
+  display: block
+  width: 100px
+  height: 4px
+  background-color: #f1b530
+  margin: 5px 0 0 0
+
+.table-lancements 
+  border-collapse: collapse
+  font-family: 'Nunito', sans-serif
+  font-size: 12px
+  width: 99%
+  margin: 0 auto
+  margin-top: -5px
+
+.table-lancements th 
+  background-color: #254680
+  color: #ffffff
+  padding: 4px
+  text-align: left
+  font-size: 13px
+  vertical-align: middle
+  font-weight: 500
+  font-family: 'Nunito', sans-serif
+
+.table-lancements td 
+  background-color: #f3f5f7
+  height: 12px
+  padding: 2px 8px
+  text-align: left
+  border: 1px solid #ddd
+  line-height: 18px
+  height: 20px
+  font-size: 12px
+  vertical-align: middle
+  border-radius: 2px
+
+  
+.pdm-low 
+  color: #ff0000!important
+  
+.pdm-high 
+  color: #008000!important 
+
+.table-lancements td:nth-child(2),
+.table-lancements td:nth-child(3),
+.table-lancements td:nth-child(4),
+.table-lancements td:nth-child(5) 
+  text-align: right
+  
+.table-lancements tr:nth-child(even) td 
+  background-color: #e0e0eb
+  
+.foote 
+  display: flex
+  justify-content: space-between
+  align-items: center
+  background-color: #F2F5F7
+  padding: 4px 16px
+  font-family: "'Nunito', sans-serif"
+  font-size: 12px
+  margin: 0
+  border-top: 1px solid #254680
+  position: absolute
+  bottom: 0
+  left: 0
+  width: 100%
+  box-sizing: border-box
+
+.foote img 
+  height: 50px
+
+
+.foote .contact 
+  text-align: left
+  color: #254680
+  font-size: 12px
+
+.foote .partner 
+  text-align: center
+  font-style: italic
+  color: #254680
+  font-size: 12px
+  
+
+.section-biosimilaires 
+  padding-top: 5px
+  background-color: #ffffff
+  font-family: "'Nunito', sans-serif"
+
+.section-biosimilaires h2 
+  font-size: 20px
+  font-weight: bold
+  color: #254680
+  margin: 0 0 10px 0
+  position: relative
+  margin-top: 0px
+
+.section-biosimilaires h2::after 
+  content: ''
+  display: block
+  width: 100px
+  height: 4px
+  background-color: #f1b530
+  margin: 5px 0 0 0
+
+
+.table-biosimilaires 
+  border-collapse: collapse
+  font-family: "'Nunito', sans-serif"
+  font-size: 12px
+  width: 99%
+  margin: 0 auto
+  margin-top: 0px
+  
+.table-biosimilaires tr:not(.total-row) 
+    border-bottom: 1px solid #ddd
+
+.table-biosimilaires th 
+  background-color: #254680
+  color: #F2F5F7
+  padding: 4px
+  text-align: left
+  font-size: 14px
+  font-weight: 500px
+  vertical-align: middle
+  font-weight: 500
+  font-family: 'Nunito', sans-serif
+
+.table-biosimilaires td 
+  background-color: #f3f5f7
+  height: 12px
+  padding: 4px 8px     
+  text-align: left
+  border: px solid #ddd
+  line-height: 18px
+  height: 20px          
+  font-size: 12px
+  margin-top: 50px
+  vertical-align: middle
+
+  
+.table-biosimilaires td:nth-child(2),
+.table-biosimilaires td:nth-child(3),
+.table-biosimilaires td:nth-child(4),
+.table-biosimilaires td:nth-child(5),
+.table-biosimilaires td:nth-child(6) 
+  text-align: right
+
+.total-row td 
+  background-color: #254680 !important
+  color: #ffffff !important
+  font-weight: bold
+  vertical-align: middle
+
+.bulle-dis 
+  display: flex
+  justify-content: space-between 
+  align-items: center
+  background-color: #F0E2B8     
+  padding: 16px 16px
+  width: 150%
+  height: 180px
+  font-size: 14px
+  font-family: 'Nunito', sans-serif
+  margin-top: 10px
+  
+.bulle-im img 
+  width: 130px
+  height: auto
+  margin-top: 150px 
+  
+
+
+.table-biosimilaires tr:nth-child(even) td 
+  background-color: #e0e0eb
+  
+.footer 
+  display: flex
+  justify-content: space-between
+  align-items: center
+  background-color: #F2F5F7
+  padding: 4px 16px
+  font-family: 'Nunito', sans-serif
+  font-size: 12px
+  margin: 0
+  border-top: 1px solid #254680
+  position: absolute
+  bottom: 0
+  left: 0
+  width: 100%
+  box-sizing: border-box
+
+.footer img 
+  height: 50px
+
+
+.footer .contact 
+  text-align: left
+  color: #254680
+  font-size: 12px
+
+.footer .partner 
+  text-align: center
+  font-style: italic
+  color: #254680
+  font-size: 12px
+  
+.footer 
+  position: fixed !important
+  bottom: 0 !important
+  left: 0 !important
+  width: 100% !important
+  -webkit-print-color-adjust: exact !important
+  print-color-adjust: exact !important
+
+@media print 
+  .html, body
+    background-color: #F2F5F7 !important
+    -webkit-print-color-adjust: exact
+    print-color-adjust: exact
+    
+  .bulle-discussion 
+    background-color: #F0E2B8!important
+
+  .rapport-header 
+    background-color: #254680 !important
+    font-family: 'Nunito', sans-serif !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .rapport-title 
+    color: #ffffff !important
+    font-family: 'Nunito', sans-serif !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .pharma-info span 
+    color: #ffffff !important
+    font-family: 'Nunito', sans-serif !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .date-info span 
+    color: #ffffff !important
+    font-family: 'Nunito', sans-serif !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-titles  
+    background-color: #F2F5F7 !important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-titles h2 
+    color: #254680 !important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-titles h2::after 
+    background-color: #f1b530 !important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .change
+    font-size: 16px!important
+    font-weight: normal!important
+    font-style: italic!important
+    color: #254680!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+
+  .table-container
+    background-color: #F2F5F7 !important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .sandoz
+    color: #f1b530!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-top-10 
+    color: #ffffff!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-top-10 tr:nth-child(even) td 
+    background-color: #ffffff !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-top-10 tr:nth-child(odd) td 
+    background-color: #f3f5f7 !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-top-10 td:nth-child(2),
+  .table-top-10 td:nth-child(3) 
+    text-align: right !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-top-10 th, .table-top-5 th 
+    background-color: #254680 !important
+    color: #ffffff !important
+    font-weight: 500!important
+    font-family: 'Nunito', sans-serif !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important 
+  .table-top-5 
+  background-color: #254680!important
+  color: #ffffff!important
+  -webkit-print-color-adjust: exact !important
+  print-color-adjust: exact !important
+  .table-top-5 tr:nth-child(even) td 
+    background-color: #f3f5f7!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-top-5 tr:nth-child(odd) td 
+    background-color:#ffffff!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-top-5 td:nth-child(3),
+  .table-top-5 td:nth-child(4) 
+    text-align: right !important
+    padding-right: 15px !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table
+    border-bottom: 1px solid #ddd!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table th 
+    background-color: #254680!important
+    color: #ffffff!important
+    border: none!important
+    text-align: left!important
+    font-weight: 500!important
+    font-family: 'Nunito', sans-serif !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table td 
+    background-color: #ffffff !important
+    padding: 1px 8px !important
+    border-bottom: 1px solid #ddd !important
+    font-family: 'Nunito', sans-serif   !important
+    text-align: left !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+    .table tr 
+    border-bottom: 1px solid #ddd !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+    .table tr:nth-child(even) td
+    background-color: #F2F5F7 !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .bulle-discussion
+    background-color:  #fffacc!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-lancements
+    background-color: #F2F5F7!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-lancements h2
+    color: #254680!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-lancements h2::after 
+    background-color: #f1b530!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-lancements tr 
+    border-bottom: 1px solid #ddd!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-lancements th  
+    background-color: #254680!important
+    color: #F2F5F7!important
+    font-weight: bold !important
+    font-weight: 500!important
+    font-family: 'Nunito', sans-serif !important
+    border: none!important
+    text-align: left!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-lancements td  
+    background-color: #ffffff!important
+    border: 1px solid #ffffff!important
+    font-family: 'Nunito', sans-serif  !important
+    border: none !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .pdm-low 
+    color: #ff0000!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .pdm-high 
+    color: #008000!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+    
+  .table-lancements tr:nth-child(even) td 
+    background-color: #F2F5F7!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .foote
+    background-color: #F2F5F7!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .foote .contact 
+    color: #254680!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .foote .partner
+    color: #254680!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-biosimilaires 
+    background-color: #F2F5F7!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+    
+    .table-biosimilaires tr 
+    border-bottom: 1px solid #F2F5F7!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+    
+  .section-biosimilaires h2 
+    color: #254680!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .section-biosimilaires h2::after
+    background-color: #f1b530!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-biosimilaires th 
+    background-color: #254680!important
+    color: white !important
+    border-left: none !important
+    border-right: none !important
+    border-top: none !important
+    border-bottom: none !important
+    font-weight: 500!important
+    font-family: 'Nunito', sans-serif !important
+  .table-biosimilaires td 
+    background-color: #ffffff!important
+    border-left: none !important
+    border-right: none !important
+    border-top: none !important
+    border-bottom: none !important
+    font-family: 'Nunito', sans-serif   !important
+    height: 10px !important
+    line-height: 14px !important
+    padding: 4px 8px !important
+  .total-row td 
+    background-color: #254680 !important
+    color: #ffffff !important
+    font-weight: bold !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .table-biosimilaires tr:nth-child(even) td 
+    background-color: #F2F5F7!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .bulle-dis
+    background-color: #fffacc!important   
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .footer
+    background-color: #F2F5F7!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .footer .contact 
+    color: #254680!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .footer .partner
+    color: #254680!important
+    font-family: 'Nunito', sans-serif  !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .marge
+    color:#008000!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+  .estimation
+    color:#254680!important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+    
+  .foote, .footer 
+    position: fixed !important
+    bottom: 0 !important
+    left: 0 !important
+    width: 100% !important
+    -webkit-print-color-adjust: exact !important
+    print-color-adjust: exact !important
+   
+a[href^="https"] img 
+  display: inline-block
+
+a[href^="https"]::after 
+  content: none !important
+
+```
+
+<div class="html"><div class="rapport-header">
+  <h1 class="rapport-title">Rapport mensuel Sandoz</h1>
+<div class="pharma-info"><img src="https://isaac-1996.github.io/Localisation/Pharmacie2_final.png" alt="Logo Pharmacie" /><span>`r params$pharmacie`</span><span></div><div class="date-info"><img src="https://isaac-1996.github.io/RVA/calendrier_2.png" alt="Logo Calendrier" /><span>`r params$mois_annee`</span></div>
+</div>
+
+<div class="section-titles"><h2>Suivi des switchs :<span class="change"> Produits Sandoz que vous avez substitués par d'autres produits équivalents</span></h2></div>
+<div class="table-container"><table class="table table-top-10">
+    <thead>
+      <tr>
+        <th>Présentation</th>
+        <th>Quantité</th>
+        <th>PFHT</th>
+      </tr>
+    </thead>
+    <tbody>
+      ```{r table_top10, echo=FALSE, results='asis'}
+      if (!is.null(params$top_10) && nrow(params$top_10) > 0) {
+        for (i in 1:nrow(params$top_10)) {
+          cat('<tr>') 
+          cat(paste0("<td>", capitalize_first(truncate_string(params$top_10[i, "Présentation"], 80)), "</td>"))
+          cat(paste0('<td>', params$top_10[i, "Quantité"], '</td>'))      
+          cat(sprintf('<td>%.2f€</td>', as.numeric(params$top_10[i, "PFHT"])))
+          cat('</tr>')  
+        }
+      } else {
+        cat("<tr><td colspan='3'><strong>Aucune donnée disponible pour ce mois.</strong></td></tr>")
+      }
+      ```
+    </tbody>
+  </table></div>
+<div class="section-titles"><h2>Princeps non substitués : <span class="change">Les produits génériques que vous avez vendus sous forme princeps</span></h2></div>
+<div class="table-top-5-container"><table class="table table-top-5">
+    <thead>
+      <tr>
+        <th>Présentation</th>
+        <th>Laboratoire</th>
+        <th>Quantité</th>
+        <th>PFHT</th>
+      </tr>
+    </thead>
+    <tbody>
+      ```{r table_top5, echo=FALSE, results='asis'}
+      if (!is.null(params$top_5) && nrow(params$top_5) > 0) {
+        for (i in 1:nrow(params$top_5)) {
+          cat('<tr>') 
+          cat(paste0("<td>", capitalize_first(truncate_string(params$top_5[i, "Présentation"], 80)), "</td>"))
+          cat(paste0('<td>', capitalize_first(truncate_string(as.character(params$top_5[i, "Laboratoire"]), 25)), '</td>'))
+          cat(paste0('<td style="text-align: right !important;">', params$top_5[i, "Quantité"], '</td>'))      
+          cat(sprintf('<td style="text-align: right !important;">%.2f€</td>', as.numeric(params$top_5[i, "PFHT"])))
+          cat('</tr>')  
+        }
+      } else {
+        cat("<tr><td colspan='4'><strong>Aucune donnée disponible pour ce mois.</strong></td></tr>")
+      }
+      ```
+    </tbody>
+  </table></div>
+  
+<div class="discussion-wrapper"><div class="bulle-discussion"><ul><li>Ces tableaux présentent les 15 produits que vous pourriez passer chez Sandoz pour améliorer votre marge.<br>La remise laboratoire correspond à celle du produit substitué et non à la remise Sandoz.<br>Vous pouvez demander l'intégralité du tableau sur le site <strong>sandoz.ospharm.org</strong>.<br><br><strong>Switchs :</strong> <span class="estimation">`r sprintf('%.2f', as.numeric(params$switch_total))`€</span><br><strong>Princeps non substitués :</strong> <span class="estimation">`r sprintf('%.2f', as.numeric(params$princeps_total))`€</span>
+</li></ul></div></div>
+
+
+
+<div class="section-lancements"><h2>Lancements sur les 6 derniers mois</h2><table class="table-lancements">
+    <thead>
+      <tr>
+        <th>Lancements</th>
+        <th>PDM Gx Sandoz</th>
+        <th>Quantité Sandoz</th>
+        <th>Quantité autres</th>
+        <th>Quantité princeps</th>
+    </tr>
+  </thead>
+  <tbody>
+      ```{r table_lancement, echo=FALSE, results='asis'}
+      if (!is.null(params$lancement) && nrow(params$lancement) > 0) {
+        for (i in 1:nrow(params$lancement)) {
+          cat('<tr>') 
+          cat(paste0('<td>', params$lancement[i, "Lancements"], '</td>'))
+          pdm_value <- params$lancement[i, "PDM Gx Sandoz"]
+          pdm_style <- case_when(
+          pdm_value < 50 ~ "pdm-low",
+          pdm_value > 80 ~ "pdm-high",
+          TRUE ~ "")
+          cat(paste0('<td class="', pdm_style, '">', params$lancement[i, "PDM Gx Sandoz"], ' %</td>'))     
+          cat(paste0('<td>', params$lancement[i, "Sandoz"], '</td>'))
+          cat(paste0('<td>', params$lancement[i, "Autres génériqueurs"], '</td>'))
+          cat(paste0('<td>', params$lancement[i, "Princeps"], '</td>'))
+          cat('</tr>')  
+        }
+      } else {
+        cat("<tr><td colspan='5'><strong>Aucune donnée disponible pour ce mois.</strong></td></tr>")
+      }
+      ```  
+    </tbody>
+  </table>
+</div><div class="foote"><div class="contact"><a href="https://www.ospharm.com/" target="_blank" style="text-decoration: none;"><img src="https://isaac-1996.github.io/Localisation/03_LOGO_OSPHARM.png" alt="Ospharm"/></a><p>02 40 53 63 44 | sandoz.ospharm.org</p></div><div class="partner">En partenariat avec</div><div><img src="https://isaac-1996.github.io/Localisation/Sandoz%20Logo%20Black%20and%20White%20300dpi.bmp__.png" alt="Sandoz"></div></div>
+
+<div style="page-break-before: always;"></div>
+
+<div class="html"><div class="rapport-header">
+  <h1 class="rapport-title">Rapport mensuel Sandoz</h1>
+<div class="pharma-info"><img src="https://isaac-1996.github.io/Localisation/Pharmacie2_final.png" alt="Logo Pharmacie" /><span>`r params$pharmacie`</span><span></div><div class="date-info"><img src="https://isaac-1996.github.io/RVA/calendrier_2.png" alt="Logo Calendrier" /><span>`r params$mois_annee`</span></div>
+</div>
+<div class="section-biosimilaires"><h2>Suivi des biosimilaires substituables - Mois en cours</h2><table class="table-biosimilaires">
+    <thead>
+      <tr>
+        <th>Molécules</th>
+        <th>Quantité Sandoz</th>
+        <th>Quantité autres</th>
+        <th>PFHT Sandoz</th>
+        <th>PFHT autres</th>
+        <th>PDM PFHT Sandoz</th>
+      </tr>
+    </thead>
+  <tbody>
+      ```{r biosimilaire, echo=FALSE, results='asis'}
+    if (!is.null(params$bio) && nrow(params$bio) > 0) {
+      for (i in 1:nrow(params$bio)) {
+        if (i == nrow(params$bio)) {
+          cat('<tr class="total-row">')
+        } else {
+          cat('<tr>')
+        }
+          cat(paste0('<td>', params$bio[i, "Molécules"], '</td>'))  
+          cat(paste0('<td>', params$bio[i, "Quantité Sandoz"], '</td>'))
+          cat(paste0('<td>', params$bio[i, "Quantité autres laboratoires"], '</td>'))
+          cat(sprintf('<td>%.2f€</td>', as.numeric(params$bio[i, "PFHT Sandoz"])))
+          cat(sprintf('<td>%.2f€</td>', as.numeric(params$bio[i, "PFHT autres laboratoires"])))
+          pdm_value <- params$bio[i, "PDM PFHT"]
+          pdm_style <- case_when(
+          pdm_value < 50 ~ "pdm-low",
+          pdm_value > 80 ~ "pdm-high",
+          TRUE ~ "")
+          cat(paste0('<td class="', pdm_style, '">', params$bio[i, "PDM PFHT"], ' %</td>'))
+          cat('</tr>')  
+        }
+      } else {
+        cat("<tr><td colspan='6'><strong>Aucune donnée disponible pour ce mois.</strong></td></tr>")
+      }
+      ```  
+    </tbody>
+  </table>
+</div>
+<div class="discussion-wrapper">
+  <div class="bulle-dis"><p>Sur la période <strong class="estimation">`r params$mois_annee`</strong>, voici les estimations de chiffres d'affaires à réaliser afin d'atteindre les objectifs de parts de marché (PDM PFHT) suivants :<br><br>
+      ```{r display_objectives_0, echo=FALSE, results='asis'}
+        if (!is.null(params$gap_total)) {
+          gap_total_num <- as.numeric(params$gap_total)
+          if (gap_total_num < 30) {
+            # gap_total inférieur à 30%
+            cat(sprintf('<span class="marge">%.2f€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">30%% PDM</strong><br>', as.numeric(params$gap_30)))
+            cat(sprintf('<span class="marge">%.2f€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">50%% PDM</strong><br>', as.numeric(params$gap_50)))
+          } else if (gap_total_num >= 30 && gap_total_num < 50) {
+            # entre 30 et 50
+            cat('<span class="marge">0.00€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">30% PDM</strong><br>')
+            cat(sprintf('<span class="marge">%.2f€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">50%% PDM</strong><br>', as.numeric(params$gap_50)))
+          } else if (gap_total_num >= 50) {
+            # déjà à 50% ou +
+            cat('<span class="marge">0.00€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">30% PDM</strong><br>')
+            cat('<span class="marge">0.00€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">50% PDM</strong><br>')
+          }
+        } else {
+          cat("Données non disponibles pour ce mois.")
+        }
+      ```   
+</p></div>
+</div>
+<br>
+<!-- Section pour les biosimilaires depuis mars 2025 -->
+<div class="table-container">
+  <div class="section-biosimilaires"><h2>Suivi des biosimilaires substituables - Depuis Mars 2025</h2>
+  <table class="table-biosimilaires">
+    <thead>
+      <tr>
+        <th>Molécules</th>
+        <th>Quantité Sandoz</th>
+        <th>Quantité autres</th>
+        <th>PFHT Sandoz</th>
+        <th>PFHT autres</th>
+        <th>PDM PFHT Sandoz</th>
+      </tr>
+    </thead>
+    <tbody>
+      ```{r biosimilaire2, echo=FALSE, results='asis'}
+      if (!is.null(params$bio2) && nrow(params$bio2) > 0) {
+        for (i in 1:nrow(params$bio2)) {
+          if (i == nrow(params$bio2)) {
+            cat('<tr class="total-row">')
+          } else {
+            cat('<tr>')
+          }
+          cat(paste0('<td>', params$bio2[i, "Molécules"], '</td>'))  
+          cat(paste0('<td>', params$bio2[i, "Quantité Sandoz"], '</td>'))
+          cat(paste0('<td>', params$bio2[i, "Quantité autres laboratoires"], '</td>'))
+          cat(sprintf('<td>%.2f€</td>', as.numeric(params$bio2[i, "PFHT Sandoz"])))
+          cat(sprintf('<td>%.2f€</td>', as.numeric(params$bio2[i, "PFHT autres laboratoires"])))
+          pdm_value <- params$bio2[i, "PDM PFHT"]
+          pdm_style <- case_when(
+            pdm_value < 50 ~ "pdm-low",
+            pdm_value > 80 ~ "pdm-high",
+            TRUE ~ "")
+          cat(paste0('<td class="', pdm_style, '">', params$bio2[i, "PDM PFHT"], ' %</td>'))
+          cat('</tr>')  
+        }
+      } else {
+        cat("<tr><td colspan='6'><strong>Aucune donnée disponible pour ce mois.</strong></td></tr>")
+      }
+      ```  
+    </tbody>
+  </table>
+</div></div>
+<div class="discussion-wrapper">
+  <div class="bulle-dis"><p>Depuis <strong class="estimation">le début du mois de Mars 2025</strong>, voici les estimations de chiffres d'affaires à réaliser afin d'atteindre les objectifs de parts de marché (PDM PFHT) suivants :<br><br>
+      ```{r display_objectives_mars2025, echo=FALSE, results='asis'}
+      if (!is.null(params$gap_total2)) {
+        gap_total_num2 <- as.numeric(params$gap_total2)
+        
+        if (gap_total_num2 < 30) {
+          # Cas où la PDM est inférieure à 30%
+          cat(sprintf('<span class="marge">%.2f€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">30%% PDM</strong><br>', as.numeric(params$gap_30_2)))
+          cat(sprintf('<span class="marge">%.2f€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">50%% PDM</strong><br>', as.numeric(params$gap_50_2)))
+          
+        } else if (gap_total_num2 >= 30 && gap_total_num2 < 50) {
+          # Cas où la PDM est entre 30% et 50%
+          cat('<span class="marge">0.00€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">30% PDM</strong><br>')
+          cat(sprintf('<span class="marge">%.2f€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">50%% PDM</strong><br>', as.numeric(params$gap_50_2)))
+          
+        } else if (gap_total_num2 >= 50) {
+          # Cas où la PDM est déjà supérieure ou égale à 50%
+          cat('<span class="marge">0.00€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">30% PDM</strong><br>')
+          cat('<span class="marge">0.00€</span> CA PFHT à réaliser pour atteindre <strong class="estimation">50% PDM</strong><br>')
+        }
+      } else {
+        cat("Données non disponibles pour cette période.")
+      }
+      ```  
+  </p></div>
+</div>
+</div>
+<div class="footer"><div class="contact"><a href="https://www.ospharm.com/" target="_blank" style="text-decoration: none;"><img src="https://isaac-1996.github.io/Localisation/03_LOGO_OSPHARM.png" alt="Ospharm"/></a><p>02 40 53 63 44 | sandoz.ospharm.org</p></div><div class="partner">En partenariat avec</div><div><img src="https://isaac-1996.github.io/Localisation/Sandoz%20Logo%20Black%20and%20White%20300dpi.bmp__.png" alt="Sandoz"></div></div>
+</div>
